@@ -1,0 +1,45 @@
+;;; -*- Mode: LISP; Package: :cl-user; BASE: 10; Syntax: ANSI-Common-Lisp; -*-
+;;;
+;;;   Time-stamp: <>
+;;;   Touched: Wed Sep 09 04:27:49 2026 +0000 <enometh@net.meer>
+;;;   Bugs-To: madhu@cs.unm.edu
+;;;   Status: Experimental.  Do not redistribute
+;;;   Copyright (C) 2026 Madhu.  All Rights Reserved.
+;;;
+
+(in-package "CL-USER")
+(defvar *quicklisp-client-source-dir*
+  (merge-pathnames "Github/quicklisp-client/" (translate-logical-pathname "EXTERN:")))
+(defvar *quicklisp-client-binary-dir* (binary-directory *quicklisp-client-source-dir*))
+
+
+(mk:defsystem :quicklisp
+  :source-pathname *quicklisp-client-source-dir*
+  :binary-pathname *quicklisp-client-binary-dir*
+  :source-extension "lisp"
+  :components ((:module "quicklisp"
+		:components ((:file "package")
+			     (:file "utils")
+			     (:file "config")
+			     (:file "impl")
+			     (:file "impl-util")
+			     (:file "network")
+			     (:file "progress")
+			     (:file "http")
+			     (:file "deflate")
+			     (:file "minitar")
+			     (:file "cdb")
+			     (:file "dist")
+			     (:file "setup")
+			     (:file "client")
+			     (:file "fetch-gzipped")
+			     (:file "client-info")
+			     (:file "client-update")
+			     (:file "dist-update")
+			     (:file "misc")
+			     (:file "local-projects")
+			     (:file "bundle")))))
+
+#+nil
+(mk:oos :quicklisp :load :compile-during-load t)
+
