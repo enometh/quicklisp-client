@@ -6,6 +6,7 @@
 ;;; This stuff will probably end up somewhere else.
 ;;;
 
+#+asdf
 (defun use-only-quicklisp-systems ()
   (asdf:initialize-source-registry
    '(:source-registry :ignore-inherited-configuration))

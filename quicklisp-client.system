@@ -12,12 +12,22 @@
   (merge-pathnames "Github/quicklisp-client/" (translate-logical-pathname "EXTERN:")))
 (defvar *quicklisp-client-binary-dir* (binary-directory *quicklisp-client-source-dir*))
 
+(mk:defsystem :mk-asdf-shim
+  :source-pathname *quicklisp-client-source-dir*
+  :binary-pathname *quicklisp-client-binary-dir*
+  :source-extension "lisp"
+  :components ((:module "quicklisp"
+		:components(:file "mk-asdf-shim"))))
+
+#+nil
+(mk:oos :mk-asdf-shim :load :compile-during-load t)
 
 (mk:defsystem :quicklisp
   :source-pathname *quicklisp-client-source-dir*
   :binary-pathname *quicklisp-client-binary-dir*
   :source-extension "lisp"
-  :components ((:module "quicklisp"
+  :components ((:file "setup-alt")
+	       (:module "quicklisp"
 		:components ((:file "package")
 			     (:file "utils")
 			     (:file "config")

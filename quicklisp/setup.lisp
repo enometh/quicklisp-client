@@ -162,6 +162,7 @@
      (format t "~&; Loading ~S~%" (name strategy))
      (asdf:load-system (name strategy) :verbose nil))))
 
+#+asdf
 (defun autoload-system-and-dependencies (name &key prompt)
   "Try to load the system named by NAME, automatically loading any
 Quicklisp-provided systems first, and catching ASDF missing
@@ -229,6 +230,7 @@ after the quickstart installation."
         (ensure-directories-exist target)
         (install-dist url :prompt nil)))))
 
+#+asdf
 (defun setup ()
   (unless (member 'system-definition-searcher
                   asdf:*system-definition-search-functions*)

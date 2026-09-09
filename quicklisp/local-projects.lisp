@@ -32,7 +32,10 @@
 (in-package #:quicklisp-client)
 
 (defparameter *local-project-directories*
-  (list (qmerge "local-projects/"))
+  #+asdf(list (qmerge "local-projects/"))
+  #+mk-defsystem
+  (when *quicklisp-home*
+    (list (qmerge "local-projects/")))
   "The default local projects directories.")
 
 (defun system-index-file (pathname)
