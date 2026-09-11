@@ -8,7 +8,9 @@
   (:use #:cl)
   (:export #:*quicklisp-home*
            #:qmerge
-           #:qenough))
+           #:qenough
+           #:setup-alt
+           #:*registry*))
 
 (in-package #:ql-setup)
 
@@ -22,6 +24,14 @@
 (defun qenough (pathname)
   (enough-namestring pathname *quicklisp-home*))
 
-(defun qenough (pathname)
-  (enough-namestring pathname *quicklisp-home*))
+(defvar *registry* nil)
 
+(defun setup-alt (root)
+  (setq *quicklisp-home* root)
+  (if (find-package "QUICKLISP")
+      (funcall (find-symbol "SETUP" "QUICKLISP"))
+      (warn "CALL SETUP-ALT after loading quicklisp")))
+
+#+nil
+(setup-alt
+ "~/scratch/extern/roswell/lisp/quicklisp/")

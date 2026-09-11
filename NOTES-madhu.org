@@ -1,0 +1,32 @@
+* NOTES.madhu
+This branch tries to use quicklisp but without asdf, using
+mk-defsystem-3.x instead.  (It does not attempt to install the
+quicklisp dist, but requires an existing quicklisp-home).
+
+** synopsis
+#+begin_src lisp
+  (load "~/cl/extern/Github/quicklisp-client/quicklisp-client.system")
+  (mk:oos :mk-asdf-shim :load :compile-during-load t)
+  (featurep :asdf) ; nil
+  (featurep :mk-defsystem) ; t
+
+  ;; create a fake asdf package that dispatches functions to
+  ;; mk-defsystem
+  (quicklisp-fudge-mk:switch-asdf-package)
+  (quicklisp-fudge-mk:set-mk)
+
+  ;; load quicklisp via mk-defsystem and configure it to use a quicklisp
+  ;; root.
+  (mk:oos :quicklisp :load :compile-during-load t)
+  (ql-setup:setup-alt  "~/cl/extern/Github/qlot/.qlot/")
+
+  ;; chose "Stop loading local setup files" restart in the last step.
+
+
+  ,#+nil
+  (trace ql::compute-load-strategy ql::apply-load-strategy
+         ql::ensure-installed ql::install
+         ql-dist::ensure-dumped-defsystem)
+  ;; install a new system
+  (ql:quickload "zlib")
+#+end_src

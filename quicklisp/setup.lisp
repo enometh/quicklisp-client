@@ -162,7 +162,6 @@
      (format t "~&; Loading ~S~%" (name strategy))
      (asdf:load-system (name strategy) :verbose nil))))
 
-#+asdf
 (defun autoload-system-and-dependencies (name &key prompt)
   "Try to load the system named by NAME, automatically loading any
 Quicklisp-provided systems first, and catching ASDF missing
@@ -178,10 +177,12 @@ dependencies too if possible."
                (when (or (not prompt)
                          (press-enter-to-continue))
                  (apply-load-strategy strategy)))
+	   #+asdf
            (asdf:missing-dependency-of-version (c)
              ;; Nothing Quicklisp can do to recover from this, so just
              ;; resignal
              (error c))
+	   #+asdf
            (asdf:missing-dependency (c)
              (let ((parent (asdf::missing-required-by c))
                    (missing (asdf::missing-requires c)))
@@ -198,7 +199,22 @@ dependencies too if possible."
                  (t
                   ;; Error isn't from a system dependency, so there's
                   ;; nothing to autoload
-                  (error c))))))))
+                  (error c)))))
+	   #+mk-defsystem
+	   (error (c)
+	     (declare (optimize (speed 0)(safety 3)(debug 3)))
+	     (when (and (typep c 'simple-condition)
+			(search "Can't find system named"
+				(simple-condition-format-control c)))
+	       (let ((missing (car (simple-condition-format-arguments c))))
+		 (if (gethash missing tried-so-far)
+                     (error "Dependency looping -- already tried to load ~
+                                 ~A" missing)
+                     (setf (gethash missing tried-so-far) missing))
+		 (autoload-system-and-dependencies missing
+                                                   :prompt prompt)
+		 (go retry)))
+	     (error c)))))
     name))
 
 (defvar *initial-dist-url*
@@ -230,14 +246,22 @@ after the quickstart installation."
         (ensure-directories-exist target)
         (install-dist url :prompt nil)))))
 
-#+asdf
 (defun setup ()
+  #+asdf
   (unless (member 'system-definition-searcher
                   asdf:*system-definition-search-functions*)
     (setf asdf:*system-definition-search-functions*
           (append asdf:*system-definition-search-functions*
                   (list 'local-projects-searcher
                         'system-definition-searcher))))
+  #+mk-defsystem
+  (progn
+    (setq *registry* (merge-pathnames "registry/" *quicklisp-home*))
+    (ensure-directories-exist *registry* :verbose t)
+    (setq mk:*central-registry* (list *registry*))
+    (setq *local-project-directories*
+	  (list (qmerge "local-projects/"))))
+
   (let ((files (nconc (directory (qmerge "local-init/*.lisp"))
                       (directory (qmerge "local-init/*.cl")))))
     (with-simple-restart (abort "Stop loading local setup files")

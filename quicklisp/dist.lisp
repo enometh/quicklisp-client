@@ -1000,6 +1000,22 @@ the given NAME."
 (defmethod install ((system system))
   (ensure-installed (release system)))
 
+#+mk-defsystem
+(defun ensure-dumped-defsystem (system)
+  (check-type system system)
+  (let* ((asd (installed-asdf-system-file system))
+	 (name (system-file-name system))
+	 (target (make-pathname :name name
+				:type "system"
+				:defaults *registry*)))
+    (unless (probe-file target)
+      (mk::asd-hack-dump-defsystem-file
+       target name (directory-namestring asd)
+       :asd-file-list (list asd)))))
+
+#+mk-defsystem
+(defmethod ensure-installed :after ((release release))
+  (map nil 'ensure-dumped-defsystem (provided-systems release)))
 
 (defmethod install-metadata-file ((system system))
   (relative-to (dist system)
