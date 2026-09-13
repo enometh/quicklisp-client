@@ -1009,9 +1009,11 @@ the given NAME."
 				:type "system"
 				:defaults *registry*)))
     (unless (probe-file target)
-      (mk::asd-hack-dump-defsystem-file
-       target name (directory-namestring asd)
-       :asd-file-list (list asd)))))
+      (let ((*default-pathname-defaults*
+	     (pathname (directory-namestring asd))))
+	(mk::asd-hack-dump-defsystem-file
+	 target name (directory-namestring asd)
+	 :asd-file-list (list asd))))))
 
 #+mk-defsystem
 (defmethod ensure-installed :after ((release release))
