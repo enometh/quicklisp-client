@@ -258,7 +258,9 @@ after the quickstart installation."
   (progn
     (setq *registry* (merge-pathnames "registry/" *quicklisp-home*))
     (ensure-directories-exist *registry* :verbose t)
-    (setq mk:*central-registry* (list *registry*))
+    (if (find-symbol "REGISTRY-ADD" "MAKE")
+	(mk:registry-add  *registry* :force-prepend)
+	(setq mk:*central-registry* (list *registry*)))
     (setq *local-project-directories*
 	  (list (qmerge "local-projects/"))))
 
