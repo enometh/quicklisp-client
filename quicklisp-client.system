@@ -12,6 +12,7 @@
   (merge-pathnames "Github/quicklisp-client/" (translate-logical-pathname "EXTERN:")))
 (defvar *quicklisp-client-binary-dir* (binary-directory *quicklisp-client-source-dir*))
 
+#+nil ;; use enometh/mk-asdf-shim from codeberg, updates go there
 (mk:defsystem :mk-asdf-shim
   :source-pathname *quicklisp-client-source-dir*
   :binary-pathname *quicklisp-client-binary-dir*

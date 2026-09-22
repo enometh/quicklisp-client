@@ -1,5 +1,8 @@
 ;;; -*- Mode: LISP; Package: :cl-user; BASE: 10; Syntax: ANSI-Common-Lisp; -*-
 ;;;
+;;; OBSOLETE VERSION: This file moved to enometh/mk-asdf-shim on
+;;; codeberg and is updated there.
+;;;
 ;;;   Time-stamp: <>
 ;;;   Touched: Wed Sep 09 14:36:11 2026 +0530 <enometh@net.meer>
 ;;;   Bugs-To: enometh@net.meer
