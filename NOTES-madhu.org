@@ -49,3 +49,27 @@ quicklisp dist, but requires an existing quicklisp-home).
   ,#+nil
   (quicklisp-fudge-mk:restore-asdf-package)
 #+end_src
+
+**  make:register-foreign-system
+We can register systems that are loaded and registered with asdf with
+mk-defsystem as make:foreign-systems. (tip: to replace an already
+loaded system, use mk:undefsystem).
+#+begin_src lisp
+  (quicklisp-fudge-mk:restore-asdf-package)
+  (find-package "ASDF") ;; #<PACKAGE "ASDF/INTERFACE">
+  ;;; register already loaded asdf systems so they are be available as
+  ;;; foreign systems for mk-defsystem
+  (load "~/scratch/extern/defsystem-3.x/asdf-foreign-system.lisp")
+
+  (assert (not (typep (mk:find-system :mk-asdf-shim) 'make::foreign-system)))
+  (make:register-foreign-system "asdf" )
+  ;; => #<FOREIGN SYSTEM: "asdf" loaded 0 (NIL)>
+  (mk:find-foreign-system "asdf" :kind :asdf)
+  ;; => #<FOREIGN SYSTEM: "asdf" loaded 3999071535 (#<SYSTEM "asdf">)>
+
+  (mapcar 'make:register-foreign-system (asdf/interface:registered-systems))
+
+  ;; restore fake asdf package
+  (quicklisp-fudge-mk:switch-asdf-package)
+  (find-package "ASDF");; => #<PACKAGE "QUICKLISP-MK-DEFSYSTEM-ASDF-SHIM">
+#+end_src
