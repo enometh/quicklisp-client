@@ -73,3 +73,19 @@ loaded system, use mk:undefsystem).
   (quicklisp-fudge-mk:switch-asdf-package)
   (find-package "ASDF");; => #<PACKAGE "QUICKLISP-MK-DEFSYSTEM-ASDF-SHIM">
 #+end_src
+
+** example: install st-json under roswell's ql install
+#+begin_src lisp
+  ,#+nil
+  ;; configure root  under roswell
+  (ql-setup:setup-alt "~/scratch/roswell/lisp/quicklisp/")
+
+  (quicklisp-fudge-mk:switch-asdf-package)
+  ;; ;madhu 260922 FIXME work around missing defsystem symbol in shim. this exists in the asdf package created by (mk::make-fake-asdf-package) though
+  (intern "DEFSYSTEM" 'asdf)
+  (export 'asdf::defsystem 'asdf)
+
+  ;;install st-json
+  ,#+nil
+  (ql:quickload "st-json")
+#+end_src
