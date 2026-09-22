@@ -5,28 +5,47 @@ quicklisp dist, but requires an existing quicklisp-home).
 
 ** synopsis
 #+begin_src lisp
-  (load "~/cl/extern/Github/quicklisp-client/quicklisp-client.system")
+  (load "~/cl/extern/mk-asdf-shim/mk-asdf-shim.system")
   (mk:oos :mk-asdf-shim :load :compile-during-load t)
-  (featurep :asdf) ; nil
+  (when (featurep :asdf) ; nil
+    (pop-feature :asdf))
   (featurep :mk-defsystem) ; t
 
   ;; create a fake asdf package that dispatches functions to
-  ;; mk-defsystem
+  ;; mk-defsystem. (this form has to be re-evaluated every time the
+  ;; mk-asdf-shim is loaded because that wipes out the package
+  ;; nicknames)
+
   (quicklisp-fudge-mk:switch-asdf-package)
+
+  ;; verify features
   (quicklisp-fudge-mk:set-mk)
+
 
   ;; load quicklisp via mk-defsystem and configure it to use a quicklisp
   ;; root.
+  (load "~/cl/extern/Github/quicklisp-client/quicklisp-client.system")
+
+  ;; ;madhu 260922 FIXME: (unintern 'QL-HTTP::*PROXY-URL* 'QL-HTTP) when
+  ;; compiling quicklisp-client on top of an already loaded quicklisp
+  ;; which defines the variable, and choose the "unintern" restart when
+  ;; loading the package.
   (mk:oos :quicklisp :load :compile-during-load t)
+
+  ;; configure quicklisp root under qlot
+  ,#+nil
   (ql-setup:setup-alt  "~/cl/extern/Github/qlot/.qlot/")
-
   ;; chose "Stop loading local setup files" restart in the last step.
-
 
   ,#+nil
   (trace ql::compute-load-strategy ql::apply-load-strategy
          ql::ensure-installed ql::install
          ql-dist::ensure-dumped-defsystem)
+
   ;; install a new system
+  ,#+nil
   (ql:quickload "zlib")
+
+  ,#+nil
+  (quicklisp-fudge-mk:restore-asdf-package)
 #+end_src
