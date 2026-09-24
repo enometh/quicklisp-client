@@ -89,3 +89,17 @@ loaded system, use mk:undefsystem).
   ,#+nil
   (ql:quickload "st-json")
 #+end_src
+
+**  mk-asdf-foreign-system:register-foreign-systems
+make mk-defsystem systems available to asdf
+#+begin_src lisp
+  ;;; register already loaded mk-defsystem systems so they are available
+  ;;; as foreign systems for asdf
+  (load "~/scratch/extern/defsystem-3.x/asdf-foreign-system.lisp")
+  (quicklisp-fudge-mk:restore-asdf-package)
+  (find-package "ASDF") ;; => #<PACKAGE "ASDF/INTERFACE">
+  (mk:find-system :st-json) ;; => #<DEFSYSTEM: st-json>
+  (MK-ASDF-FOREIGN-SYSTEM:register-foreign-systems :st-json)
+  ;; =>  (#<ASDF/SYSTEM:SYSTEM "st-json">)
+  (type-of (asdf:find-system :st-json))
+#+end_src
