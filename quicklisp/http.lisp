@@ -321,9 +321,11 @@
 (defun sink-buffer (sink)
   (subseq (storage sink) 0))
 
+#||
 #+asdf
 (defvar *proxy-url* (config-value "proxy-url"))
 #+mk-defsystem
+||#
 (define-symbol-macro *proxy-url* (config-value "proxy-url"))
 
 (defun full-proxy-path (host port path)
